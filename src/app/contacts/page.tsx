@@ -142,6 +142,23 @@ export default function ContactsPage() {
     }
   };
 
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Are you sure you want to delete ${selectedIds.size} contact(s)? This cannot be undone.`)) return;
+    setIsDeleting(true);
+    const ids = Array.from(selectedIds);
+    const { error } = await supabase.from("contacts").delete().in("id", ids);
+    setIsDeleting(false);
+    if (error) {
+      toast.error("Delete Failed", { description: error.message });
+    } else {
+      toast.success("Contacts Deleted", { description: `${ids.length} contact(s) have been removed.` });
+      setSelectedIds(new Set());
+      fetchContacts();
+    }
+  };
+
   const handleEdit = (contact: Contact) => {
     setEditContact(contact);
     setEditName(contact.name);
@@ -332,6 +349,14 @@ export default function ContactsPage() {
                   className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-white rounded-xl transition-all"
                 >
                   Clear
+                </button>
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={isDeleting}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-red-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-rose-500/20 transition-all active:scale-[0.97] disabled:opacity-60"
+                >
+                  {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  Delete Selected
                 </button>
                 <button
                   onClick={() => setShowGroupModal(true)}

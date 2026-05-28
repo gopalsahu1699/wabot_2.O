@@ -43,6 +43,14 @@ next-env.d.ts
 
 # WhatsApp Web.js auth sessions
 .wwebjs_auth/
+.wwebjs_cache/
 
 # Supabase
 supabase/.temp/
+
+# OS
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
